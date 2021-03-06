@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}主页{% endblock %}
+
+{% block head_require %}
+    <link rel="stylesheet" href="/static/editor.md/css/editormd.preview.css">
+    <link rel="stylesheet" href="/static/css/article_detail.css">
+    <script src="{{ url_for('static',filename='DPlayer/dist/DPlayer.min.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+          <div class="col-md-10">
+              <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">文章内容</h3>
+                  </div>
+                  <div class="panel-body">
+                    {% include 'message.html' %}
+                      <h3>{{ article.title }}</h3>
+                      <p>
+                        <span class="glyphicon glyphicon-user" aria-hedden="true">{{ article.user.username }}</span>
+                        <span class="glyphicon glyphicon-calendar" aria-hidden="true">{{ article.create_time.strftime("%Y-%m-%d") }}</span>
+                        <span class="glyphicon glyphicon-heart" aria-hedden="true"> </span><small><a href="/article/favorite/add/{{ article.id }}"> 收藏 </a></small> 
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><small><a href="/article/star/{{ article.id }}"> 点赞 </a></small>
+                          <!-- {% if article.update_time %}
+                            {{ article.update_time }}
+                          {% endif %} -->
+                      </p>
+
+                      <div id="test-markdown-view">
+                          <!-- Server-side output Markdown text -->
+                          <textarea style="display:none;">{{ article.content }}</textarea>
+                      </div>
+                    {% if article.articalvideo %}
+                      <div style="margin-top:10px;margin-bottom:20px;">
+                          <div id="dplayer" style="height: 250px; width: 387px;"></div>
+                      </div>
+                    {% endif %}
+                  {% if prev_article %}
+                      <a href="/article/article_detail/{{ prev_article.id }}">
+                          <button class="btn btn-default">
+                              <span class="glyphicon glyphicon-menu-up"></span>
+                              {{ prev_article.title }}
+                          </button>
+                      </a>
+                  {% else %}
+                      <button class="btn btn-default" disabled>
+                          <span class="glyphicon glyphicon-menu-up"></span>
+                          没有了
+                      </button>
+                  {% endif %}
+
+                  {% if next_article %}
+                      <a href="/article/article_detail/{{ next_article.id }}">
+                          <button class="btn btn-default">
+                              <span class="glyphicon glyphicon-menu-down"></span>
+                              {{ next_article.title }}
+                          </button>
+                      </a>
+                  {% else %}
+                      <button class="btn btn-default" disabled>
+                          <span class="glyphicon glyphicon-menu-down"></span>
+                          没有了
+                      </button>
+                  {% endif %}
+
+                  <!--评论-->
+                  <div class="comment-button">
+                    {% if session.get('user') %}
+                        <a href="/article/add_comment/{{ session.get('user') }}/{{ article.uid }}/{{ article.id }}/0/0">发表评论</a>
+                    {% else %}
+                        请 <a href="/admin/login">登陆</a> 后再评论
+                    {% endif %}
+                  </div>
+
+                  <div class="comment-box">
+                      {% for c1 in comments %}
+                          {% if c1.root == 0 %}
+                              <p>{{ c1.user.nickname or c1.user.username }} @ {{ c1.to_user.nickname or  c1.to_user.username }} {{ c1.create_time }}</p>
+                              <p>
+                                  <img src="{{ c1.user.head_url }}" alt="" width="30px" height="30px" class="img-circle">
+                                  {{ c1.content }}
+                                  <a href="/article/add_comment/{{ session.get('user') }}/{{ c1.uid }}/{{ article.id }}/1/{{c1.id}}">回复</a>
+                              </p>
+                          {% endif %}
+
+                          {% for c2 in comments %}
+                              {% if c2.root == c1.id %}
+                                  <div style="margin:0 0 0 30px;">
+                                  <p>{{ c2.user.nickname or c2.user.username  }} @ {{ c2.to_user.nickname or c2.to_user.username }} {{ c2.create_time }}</p>
+                                      <p style="background: #eee; padding:10px;">
+                                          <img src="{{ c2.user.head_url }}" alt="" width="30px" height="30px" class="img-circle">
+                                          {{ c2.content }}
+                                          <a href="/article/add_comment/{{ session.get('user') }}/{{ c2.uid }}/{{ article.id }}/1/{{c1.id}}">回复</a>
+                                      </p>
+                                  </div>
+                          {% endif %}
+                          {% endfor %}
+                      {% endfor %}
+                  </div>
+
+                  </div>
+                </div>
+          </div>
+          <div class="col-md-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">作者信息</h3>
+                </div>
+                <div class="panel-body" style="text-align: center;">
+                    <img src="{{ article.user.head_url }}" alt="" width="100px" height="100px" class="img-circle"
+                        style="display: inline-block;">
+                    <p style="margin-top:15px">{{ article.user.nickname or article.user.username }}</p>
+                </div>
+            </div>
+
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_require %}
+<script src="/static/editor.md/editormd.js"></script>
+<script src="/static/editor.md/lib/marked.min.js"></script>
+<script src="/static/editor.md/lib/prettify.min.js"></script>
+
+<script type="text/javascript">
+$(function() {
+    var testView = editormd.markdownToHTML("test-markdown-view", {
+        // markdown : "[TOC]\n### Hello world!\n## Heading 2", // Also, you can dynamic set Markdown text
+        // htmlDecode : true,  // Enable / disable HTML tag encode.
+        // htmlDecode : "style,script,iframe",  // Note: If enabled, you should filter some dangerous HTML tags for website security.
+
+    });
+});
+</script>
+{% if article.articalvideo %}
+<script>
+        // 弹幕js
+        var dp1 = new DPlayer({
+            element: document.getElementById("dplayer"),
+            video: {
+                // 视屏地址
+                url: "{{ url_for('static',filename='uploads'+article.articalvideo) }}"
+            },
+            danmaku: {
+                id: "{{ article.uuid }}",
+                api: 'https://dplayer.moerats.com/'
+            }
+        })
+</script>
+{% endif %}
+{% endblock %}

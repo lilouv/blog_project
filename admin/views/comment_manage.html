@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-md-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">评论管理</h3>
+            </div>
+            <div class="panel-body">
+                {% include 'message.html' %}
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th>文章id</th>
+                        <th>评论内容</th>
+                        <th>用户名</th>
+                        <th>评论时间</th>
+                        <th>操作</th>
+                    </tr>
+                    {% for comment in comments %}
+                        <tr>
+                            <td><a href="/article/article_detail/{{ comment.article_id }}">{{ comment.article_id }}</a></td>
+                            <td>{{ comment.content }}</td>
+                            <td>{{ comment.uid }}</td>
+                            <td>{{ comment.create_time }}</td>
+                            <td>
+                                <a href="/admin/comment/{{ comment.id }}"><span class="label label-primary">修改</span></a>
+                                <a href="/admin/comment/delete/{{ comment.id }}"><span class="label label-danger">删除</span></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

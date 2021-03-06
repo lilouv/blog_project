@@ -1,0 +1,9 @@
+{% for group in groups %}
+    <p>
+        <a href="/article/group_articles/{{ group.id }}">
+            <span class="label label-{{group.color}}">
+                {{ group.name }}({{ group.articles | count }})
+            </span>
+        </a>
+    </p>
+{% endfor %}

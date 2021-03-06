@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+      <div class="col-md-10">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">编辑分类</h3>
+            </div>
+            <div class="panel-body">
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label for="name">分类名称</label>
+                        <input type="text" name="name" id="name" placeholder="请输入分类名称" class="form-control" value="{{ group.name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">颜色：</label>
+                        <select name="color" id="color" class="form-control">
+                            <option value="{{ group.color }}">{{ group.color }}</option>
+                            {% for color in colors %}
+                                <option value="{{ color }}">{{ color }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary">
+                    </div>
+                    <div class="form-group">
+                        参考：
+                        <span class="label label-default">Default</span>
+                        <span class="label label-primary">Primary</span>
+                        <span class="label label-success">Success</span>
+                        <span class="label label-info">Info</span>
+                        <span class="label label-warning">Warning</span>
+                        <span class="label label-danger">Danger</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">分类列表</h3>
+            </div>
+            <div class="panel-body">
+                {% include 'group_list.html' %}
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

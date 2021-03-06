@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}主页{% endblock %}
+
+{% block home %}
+active
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-10">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">文章列表</h3>
+        </div>
+        <div class="panel-body">
+          {% include 'message.html' %}
+          {% for article in articles %}
+          <!-- <h3><a href="/article/article_detail/{{ article.id }}">{{ article.title }}</a></h3>
+          
+          <span class="glyphicon glyphicon-user" aria-hedden="true">{{ article.user.username }}</span>
+          <span class="glyphicon glyphicon-calendar" aria-hidden="true">{{ article.create_time.strftime("%Y-%m-%d")}}</span>
+          <hr>
+          <p>{{article.content|safe|truncate(300,True)}}</p> -->
+          
+          <div class="media">
+            <div class="media-left">
+              <img src="{{article.articalimg}}" class="media-object" style="width:120px">
+            </div>
+            <div class="media-body">
+              <!-- <h4 class="media-heading">左对齐</h4> -->
+              <h4  class="media-heading"><a href="/article/article_detail/{{ article.id }}">{{ article.title }}</a></h4>
+                <p style="margin-top: 10px; margin-bottom: 15px;">
+                <span class="glyphicon glyphicon-user" aria-hedden="true">{{ article.user.username }}</span>
+                <span class="glyphicon glyphicon-calendar" aria-hidden="true">{{ article.create_time.strftime("%Y-%m-%d")}}</span>
+                <span class="glyphicon glyphicon-thumbs-up"  aria-hidden="true">{{ article.starcnt}}</span>
+                </p>
+                <p>{{article.content|safe|truncate(150,True)}}</p> 
+                <span class="label label-{{ article.group.color }}">{{ article.group.name }} </span>
+            </div>
+          </div>
+          <p> 
+            
+            <span class="label label-blue">占位</span> 
+            <a href="/article/article_detail/{{ article.id }}" class="btn  btn-sm btn-primary btn-text-right" style="float:right">
+              <span class="glyphicon glyphicon-share-alt"aria-hidden="true"></span>阅读更多。。。
+          </a>
+          </p>
+          <!-- <hr style="border-top: 2px solid black;"> -->
+          <hr>
+
+          {% endfor %}
+
+          <!--分页控件-->
+          <nav aria-label="Page navigation">
+            <ul class="pagination">
+              {% if paginate.has_prev %}
+              <li>
+                <a href="/index?page={{ paginate.prev_num }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% endif %}
+              {% for page in paginate.iter_pages() %}
+              {% if page == paginate.page %}
+              <li class=active><a href="/index?page={{ page }}">{{ page }}</a></li>
+              {% else %}
+              <li><a href="/index?page={{ page }}">{{ page }}</a></li>
+              {% endif %}
+              {% endfor %}
+              {% if paginate.has_next %}
+              <li>
+                <a href="/index?page={{ paginate.next_num }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">全站通知</h3>
+        </div>
+        <div class="panel-body">
+          <p>全站通知</p>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">联系站长</h3>
+        </div>
+        <div class="panel-body">
+          <p>QQ：3145760782</p>
+          <p>Email: 3145760782@qq.com</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
